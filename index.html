@@ -3,63 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工业风格单页应用</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&family=Source+Serif+Pro:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <title>PixiJS 网格画布</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+        }
+        
+        #app {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            cursor: grab;
+        }
+        
+        canvas:active {
+            cursor: grabbing;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        #controls h3 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+        
+        #controls p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+        
+        #info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <div class="tab-container">
-            <ul id="tab-list" class="tab-list">
-                <!-- 选项卡将由JS动态生成 -->
-            </ul>
-            <button id="add-tab-btn" class="add-tab-btn" title="添加新选项卡">+</button>
-        </div>
-        <main id="tab-content-container">
-            <!-- 选项卡内容将由JS动态生成 -->
-        </main>
-
-        <div class="floating-action-buttons">
-            <button id="lang-toggle-btn" class="fab-item" title="切换语言 / Switch Language">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M7.75 2.75a.75.75 0 00-1.5 0v1.258a32.987 32.987 0 00-3.599.278.75.75 0 10.198 1.487A31.545 31.545 0 017 5.513V6.25a.75.75 0 001.5 0V2.75z" />
-                    <path fill-rule="evenodd" d="M6.194 12.75a.75.75 0 01.988 1.25l-2.673 2.139a.75.75 0 01-1.25-.988l2.138-2.673.29-.363zM12.752 6.194a.75.75 0 011.25-.988l2.139 2.673a.75.75 0 11-.988 1.25l-2.673-2.138-.363-.29z" clip-rule="evenodd" />
-                    <path fill-rule="evenodd" d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm5.25.25a.75.75 0 01.75-.75h2.463a8.63 8.63 0 01-1.34 3.313.75.75 0 11-1.286-.774 7.13 7.13 0 001.018-2.539H7.75a.75.75 0 01-.75-.75zm4.012 2.539a7.13 7.13 0 001.018 2.539.75.75 0 11-1.286.774 8.63 8.63 0 01-1.34-3.313H12a.75.75 0 01.75.75.75.75 0 001.5 0A2.25 2.25 0 0012 10h-.012a.75.75 0 01-.738.75z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <button id="help-btn" class="fab-item" title="帮助">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <button id="theme-toggle-btn" class="fab-item" title="切换主题">
-                <span class="icon-sun">&#9728;</span>
-                <span class="icon-moon">&#9790;</span>
-            </button>
-        </div>
-
-        <div id="help-modal" class="modal-overlay">
-            <div class="modal-content">
-                <button id="close-modal-btn" class="close-modal-btn">&times;</button>
-                <h2>帮助文档</h2>
-                <p>这是一个基于 AI 驱动的降本增效应用。</p>
-                <p><strong>基本流程:</strong></p>
-                <ol>
-                    <li>在主界面输入一个初始参数，然后按 <kbd>Enter</kbd> 键。</li>
-                    <li>系统将根据您的输入，加载一系列可编辑的预设参数。</li>
-                    <li>您可以在这些参数框中修改数值，修改后按 <kbd>Enter</kbd> 键确认。</li>
-                    <li>所有参数确认后，系统将进行分析并从右侧面板输出结果（此功能待开发）。</li>
-                </ol>
-                <p>您可以通过点击顶部的 <strong>+</strong> 按钮来创建新的任务选项卡。</p>
-            </div>
-        </div>
-
-        <footer>
-            <p>&copy; 2024 工业控制系统</p>
-        </footer>
+    <div id="controls">
+        <h3>📋 操作说明</h3>
+        <p>🖱️ 滚轮：缩放画布</p>
+        <p>🖱️ 左键拖拽：移动画布</p>
+        <p>🖱️ 左键点击网格：高亮/取消高亮</p>
+        <p>📁 拖拽 JSON 文件到画布加载高亮</p>
+        <hr style="margin: 10px 0; border: none; border-top: 1px solid #444;">
+        <button id="load-json-btn" style="width: 100%; padding: 8px; background: #4CAF50; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 14px;">加载 JSON 文件</button>
+        <button id="clear-highlights-btn" style="width: 100%; padding: 8px; background: #f44336; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 14px; margin-top: 5px;">清除所有高亮</button>
+        <input type="file" id="file-input" accept=".json" style="display: none;">
     </div>
-    <script src="js/script.js"></script>
+    
+    <div id="info">
+        <span id="zoom-info">缩放: 100%</span> | 
+        <span id="pos-info">位置: (0, 0)</span>
+    </div>
+    
+    <div id="cell-info" style="position: absolute; background: rgba(0, 0, 0, 0.9); padding: 8px 12px; border-radius: 6px; color: white; font-size: 14px; display: none; pointer-events: none; z-index: 1001; border: 2px solid #4CAF50; white-space: nowrap;">
+        <div id="cell-coords" style="font-weight: bold;"></div>
+    </div>
+    
+    <div id="app"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.min.js"></script>
+    <script src="app.js"></script>
 </body>
-</html> 
+</html>
+
